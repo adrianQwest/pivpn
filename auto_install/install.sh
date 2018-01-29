@@ -955,7 +955,7 @@ confNetwork() {
             $SUDO sed -i "s/\(DEFAULT_FORWARD_POLICY=\).*/\1\"ACCEPT\"/" /etc/default/ufw
             $SUDO sed -i -e '/delete these required/r /tmp/ufw_add.txt' -e//N /etc/ufw/before.rules
             $SUDO ufw allow "${PORT}/${PROTO}"
-            $SUDO ufw allow from 10.8.0.0/24
+            $SUDO ufw allow from "$IPv4SubNet.0/24"
             $SUDO ufw reload
             echo "::: UFW configuration completed."
         fi
