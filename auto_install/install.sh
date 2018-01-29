@@ -55,6 +55,12 @@ IPv4dev=$(ip route get 8.8.8.8 | awk '{for(i=1;i<=NF;i++)if($i~/dev/)print $(i+1
 IPv4addr=$(ip route get 8.8.8.8| awk '{print $7}')
 IPv4gw=$(ip route get 8.8.8.8 | awk '{print $3}')
 
+#set address for subnet RANDOM	
+IPDIG1=$(( $RANDOM % 201 +29))
+IPDIG2=$(( $RANDOM % 201 +29))
+IPv4SubNet="10.$IPDIG1.$IPDIG2"
+echo $IPv4SubNet > /etc/pivpn/vpnSubNet.txt
+
 availableInterfaces=$(ip -o link | grep "state UP" | awk '{print $2}' | cut -d':' -f1 | cut -d'@' -f1)
 dhcpcdFile=/etc/dhcpcd.conf
 
@@ -899,6 +905,9 @@ EOF
     # write out server certs to conf file
     $SUDO sed -i "s/\(key \/etc\/openvpn\/easy-rsa\/pki\/private\/\).*/\1${SERVER_NAME}.key/" /etc/openvpn/server.conf
     $SUDO sed -i "s/\(cert \/etc\/openvpn\/easy-rsa\/pki\/issued\/\).*/\1${SERVER_NAME}.crt/" /etc/openvpn/server.conf
+
+    # set subnet
+    $SUDO sed -i "s/10\.8\.0/${IPv4SubNet}/g" /etc/openvpn/server.conf
 }
 
 confUnattendedUpgrades() {
